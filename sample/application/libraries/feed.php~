@@ -1,0 +1,62 @@
+<?php
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+require_once("feed/feed_factory.php");
+
+class Feed{
+	protected $feed;
+	
+	/**
+	*	Specify the content type of the page, depending on the feed type
+	*	@access protected
+	*/
+	protected $content_type;
+	
+	/**
+	*	CodeIgniter instance
+	*	@access protected
+	*/
+	protected $CI;
+	
+	function __construct(){
+		$this->CI =& get_instance();
+	}
+	
+	/**
+	*	Create a RSS 2.0 feed
+	*	@params string
+	*	@access public
+	*	@return object
+	*/
+	public function create_rss20($encoding="utf-8"){
+		$this->content_type = "Content-Type: application/rss+xml"; 
+		$this->feed = FeedFactory::CreateRss20($encoding);
+		
+		return $this->feed;
+	}
+	
+	/**
+	*	Create an ATOM 1.0 feed
+	*	@params string
+	*	@access public
+	*	@return object
+	*/
+	public function create_atom10($encoding="utf-8"){
+		$this->content_type = "Content-Type: application/atom+xml"; 
+		//$this->feed = new Atom10($encoding);
+		$this->feed = FeedFactory::CreateAtom10($encoding);
+		
+		return $this->feed;
+	}
+	
+	/**
+	*	Set the content type of the page and echoes the feed
+	*	@access public
+	*	@return void
+	*/
+	public function view_feed(){
+		header($this->content_type);
+		echo $this->feed->get();
+	}
+}
+?>
